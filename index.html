@@ -1,11 +1,67 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planner Pedagógico</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/app.js" defer></script>
 </head>
+
 <body>
-    
+  <header class="topbar">
+    <div class="topbar-row">
+      <div class="brand">
+        <img src="assets/icon.png" alt="Logo do Planner" class="logo" />
+        <span class="title">Planner Pedagógico</span>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="userBadge" class="user-badge"></span>
+        <button class="theme-btn" type="button" id="themeToggle" aria-label="Alternar tema">🌓</button>
+        <button class="btn-ghost" type="button" id="logoutBtn">Sair</button>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Navegação principal">
+      <button class="tab is-active" role="tab" aria-selected="true" data-view="config">Configuração</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="classes">Turmas</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="attendance">Chamada</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="dailyPlan">Planejamento</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="assessments">Avaliações</button>
+    </nav>
+  </header>
+
+  <main class="app" id="app">
+    <section class="view is-active" data-view="config">
+      <h1>Configuração</h1>
+      <p>Aqui você vai colocar preferências do app.</p>
+    </section>
+
+    <section class="view" data-view="classes" hidden>
+      <h1>Turmas</h1>
+      <p>Cadastro e lista de turmas.</p>
+    </section>
+
+    <section class="view" data-view="attendance" hidden>
+      <h1>Chamada</h1>
+      <p>Registro de presença.</p>
+    </section>
+
+    <section class="view" data-view="dailyPlan" hidden>
+      <h1>Planejamento</h1>
+      <p>Planejamento diário/por disciplina.</p>
+    </section>
+
+    <section class="view" data-view="assessments" hidden>
+      <h1>Avaliações</h1>
+      <p>Criação de avaliações e lançamento de notas.</p>
+    </section>
+  </main>
 </body>
 </html>

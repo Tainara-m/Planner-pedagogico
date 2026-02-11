@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Acesse sua conta ou crie um novo cadastro para usar o Planner Pedagógico." />
+  <meta name="author" content="Tainara Martins" />
+  <meta name="keywords" content="planner, pedagógico, login, cadastro, educação" />
+
+  <title>Login • Planner Pedagógico</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="manifest" href="assets/site.webmanifest">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/auth.css" /> 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js" defer></script>
+</head>
+
+<body>
+<main class="auth">
+  <div class="auth__container">
+
+    <!-- LADO ESQUERDO -->
+    <section class="auth__brand">
+      <img src="assets/icon.png" alt="Logo Planner" class="auth__logo">
+      <p class="auth__subtitle">
+        Organize turmas, avaliações e planejamento em um único lugar.
+      </p>
+    </section>
+
+    <!-- LADO DIREITO -->
+    <section class="auth__card-wrapper">
+      <div class="card">
+
+        <header class="card__header">
+          <button class="theme-btn" type="button" id="themeToggle" aria-label="Alternar tema">🌓</button>
+          <div class="switch">
+            <button class="switch__btn is-active" type="button" data-screen="login">Login</button>
+            <button class="switch__btn" type="button" data-screen="register">Cadastro</button>
+          </div>
+        </header>
+
+        <!-- LOGIN -->
+        <section class="screen is-active" data-screen="login">
+          <form id="loginForm" class="form" novalidate>
+
+            <div class="field">
+              <label for="loginUser">E-mail</label>
+              <input id="loginUser" type="email" required placeholder="Insira o seu e-mail"/>
+            </div>
+
+            <div class="field">
+              <label for="loginPass">Senha</label>
+              <input id="loginPass" type="password" minlength="8" required placeholder="Insira a sua senha"/>
+              <small class="hint">Mínimo 8 caracteres</small>
+            </div>
+
+            <div class="row">
+              <button type="button" class="link" id="openRecover">
+                Recuperar senha
+              </button>
+            </div>
+
+            <button type="submit" class="btn primary" id="enter">
+              Entrar
+            </button>
+
+          </form>
+        </section>
+
+        <!-- CADASTRO -->
+        <section class="screen" data-screen="register" hidden>
+          <form id="registerForm" class="form" novalidate>
+
+            <div class="field">
+              <label for="role">Status</label>
+              <select id="role" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="professor">Professor</option>
+                <option value="supervisor">Supervisor</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="name">Nome</label>
+              <input id="name" type="text" required placeholder="Informe seu nome completo"/>
+            </div>
+
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input id="email" type="email" required placeholder="Informe seu e-mail"/>
+            </div>
+
+            <div class="field">
+              <label for="username">Usuário</label>
+              <input id="username" type="text" required placeholder="Informe um usuário(somente letras)"/>
+            </div>
+
+            <div class="field">
+              <label for="pass">Senha</label>
+              <input id="pass" type="password" minlength="8" required placeholder="Insira a sua senha"/>
+            </div>
+
+            <div class="field">
+              <label for="pass2">Confirmar senha</label>
+              <input id="pass2" type="password" minlength="8" required placeholder="Insira a sua senha novamente"/>
+            </div>
+
+            <button type="submit" class="btn primary">
+              Criar conta
+            </button>
+
+          </form>
+        </section>
+
+        <div id="toast" class="toast" hidden></div>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- MODAL RECUPERAR SENHA -->
+<div class="modal" id="recoverModal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__panel">
+    <header class="modal__header">
+      <h2>Recuperar senha</h2>
+      <button class="icon" type="button" data-close>✕</button>
+    </header>
+
+    <form id="recoverForm" class="form" novalidate>
+      <div class="field">
+        <label for="recoverEmail">E-mail</label>
+        <input id="recoverEmail" type="email" required />
+      </div>
+
+      <button type="submit" class="btn">
+        Enviar link
+      </button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

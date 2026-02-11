@@ -1,0 +1,416 @@
+/* ================================
+   AUTH.CSS (único arquivo completo)
+   Paleta harmônica baseada na logo
+   + Tema escuro/claro (via data-theme)
+   + Layout logo à esquerda / card à direita
+   ================================ */
+
+/* ========= 1) TOKENS + TEMAS ========= */
+
+/* Tema padrão: ESCURO (noite + vinho + ouro) */
+:root{
+  /* Brand tokens (inspirados na logo) */
+  --gold: #D4A73C;        /* dourado */
+  --gold-2: #F2D07A;      /* dourado claro / brilho */
+  --wine: #2B0B0C;        /* vinho muito escuro */
+  --wine-2: #3A1012;      /* vinho escuro */
+  --ember: #DD581B;       /* âmbar/laranja */
+  --ink: #0B0C10;         /* fundo noite */
+  --ink-2: #12141C;       /* superfície escura */
+  --paper: #F3E7CF;       /* pergaminho (tema claro) */
+  --paper-2: #E9D7B0;     /* pergaminho 2 */
+  --radius: 18px;
+
+  /* Semantic (escuro) */
+  --bg: var(--ink);
+  --bg-grad-1: rgba(212,167,60,.18);
+  --bg-grad-2: rgba(221,88,27,.12);
+  --bg-grad-3: rgba(58,16,18,.22);
+
+  --surface: rgba(18,20,28,.78);
+  --card: rgba(43,11,12,.86);          /* vinho glass */
+  --card-border: rgba(242,208,122,.16);
+  --divider: rgba(242,208,122,.14);
+
+  --text: #F3E7CF;                     /* pergaminho */
+  --muted: rgba(243,231,207,.72);
+  --muted-2: rgba(243,231,207,.55);
+
+  --accent: var(--gold);
+  --accent-2: var(--ember);
+
+  --input-bg: rgba(0,0,0,.18);
+  --input-border: rgba(242,208,122,.18);
+  --focus: rgba(212,167,60,.22);
+
+  --btn-bg: var(--gold);
+  --btn-text: #2B0B0C;
+  --btn-hover: var(--gold-2);
+
+  --tab-bg: rgba(0,0,0,.18);
+  --tab-bg-active: rgba(212,167,60,.12);
+  --tab-border: rgba(242,208,122,.16);
+
+  --danger:#ff4d6d;
+  --ok:#2dd4bf;
+
+  --shadow: 0 18px 60px rgba(0,0,0,.45);
+}
+
+/* Tema CLARO (pergaminho + vinho + ouro) */
+:root[data-theme="light"]{
+  --bg: var(--paper);
+  --bg-grad-1: rgba(212,167,60,.22);
+  --bg-grad-2: rgba(221,88,27,.14);
+  --bg-grad-3: rgba(43,11,12,.10);
+
+  --surface: rgba(255,255,255,.62);
+  --card: rgba(243,231,207,.88);
+  --card-border: rgba(43,11,12,.14);
+  --divider: rgba(43,11,12,.10);
+
+  --text: #1A1412;
+  --muted: rgba(26,20,18,.70);
+  --muted-2: rgba(26,20,18,.55);
+
+  --accent: #8A1B1F;       /* vinho no claro */
+  --accent-2: var(--ember);
+
+  --input-bg: rgba(255,255,255,.70);
+  --input-border: rgba(43,11,12,.18);
+  --focus: rgba(138,27,31,.18);
+
+  --btn-bg: #8A1B1F;
+  --btn-text: var(--paper);
+  --btn-hover: #A6262B;
+
+  --tab-bg: rgba(255,255,255,.70);
+  --tab-bg-active: rgba(138,27,31,.12);
+  --tab-border: rgba(43,11,12,.16);
+
+  --shadow: 0 18px 60px rgba(43,11,12,.18);
+}
+
+/* ========= 2) RESET / BASE ========= */
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1000px 600px at 18% 0%, var(--bg-grad-1), transparent 60%),
+    radial-gradient(900px 600px at 85% 10%, var(--bg-grad-2), transparent 65%),
+    radial-gradient(800px 500px at 30% 100%, var(--bg-grad-3), transparent 60%),
+    var(--bg);
+}
+
+/* ========= 3) LAYOUT (logo + card) ========= */
+.auth{
+  min-height: 100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 40px;
+}
+
+.auth__container{
+  width:100%;
+  max-width: 1200px;
+  display:grid;
+  grid-template-columns: 1fr 520px;
+  gap: 40px;
+  align-items:center;
+}
+
+.auth__brand{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap: 10px;
+  align-items:center;
+  text-align:center;
+}
+
+.auth__logo{
+  width: 420px; /* harmônico com card 520px */
+  height:auto;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 14px 28px rgba(0,0,0,.35));
+}
+
+.auth__title{
+  font-family: 'Cinzel', serif;
+  font-size: 30px;
+  margin: 0;
+  letter-spacing: .2px;
+  color: var(--accent);
+  text-shadow: 0 6px 18px rgba(0,0,0,.25);
+}
+
+.auth__subtitle{
+  font-family: 'Cinzel', serif;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1.15;
+  max-width: 520px;
+  margin: 0;
+}
+
+.auth__card-wrapper{
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* ========= 4) CARD ========= */
+.card{
+  width:100%;
+  max-width: 520px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  overflow:hidden;
+  animation: float 2s ease-in-out infinite;
+}
+
+.card__header{
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid var(--divider);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ========= 5) SWITCH (Login/Cadastro) ========= */
+.switch{
+  width:100%;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.switch__btn{
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 800;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--tab-border);
+  background: var(--tab-bg);
+  color: var(--text);
+  cursor:pointer;
+  transition: background .2s, border-color .2s, transform .04s, filter .2s;
+}
+
+.switch__btn:hover{
+  filter: brightness(1.06);
+}
+
+.switch__btn.is-active{
+  background: var(--tab-bg-active);
+  border-color: var(--accent);
+}
+
+/* ========= 6) TEMA (botão de alternância) ========= */
+.theme-btn{
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--divider);
+  background: rgba(255,255,255,.05);
+  color: var(--text);
+  cursor: pointer;
+  display:grid;
+  place-items:center;
+}
+:root[data-theme="light"] .theme-btn{
+  background: rgba(0,0,0,.04);
+}
+.theme-btn:hover{
+  filter: brightness(1.06);
+}
+
+/* ========= 7) FORM / INPUTS ========= */
+.screen{ padding: 16px 18px 18px; }
+.screen:not(.is-active){ display:none; }
+
+.form{ display:grid; gap: 12px; }
+.field{ display:grid; gap: 7px; }
+
+label{
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  color: var(--muted);
+}
+
+input, select{
+  width:100%;
+  padding: 12px 12px;
+  font-size: 18px;
+  border-radius: 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  outline:none;
+}
+
+input::placeholder{ color: var(--muted-2); }
+
+input:focus, select:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.hint{
+  color: var(--muted-2);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+}
+
+/* ========= 8) BOTÕES / LINKS ========= */
+.btn{
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--input-border);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  cursor:pointer;
+  transition: transform .04s ease, background .2s, filter .2s;
+}
+
+.btn:active{ transform: translateY(1px); }
+
+.btn.primary{
+  background: var(--btn-bg);
+  border-color: rgba(0,0,0,.10);
+  color: var(--btn-text);
+}
+
+.btn.primary:hover{
+  background: var(--btn-hover);
+  filter: saturate(1.05);
+}
+
+.link{
+  border:none;
+  background:transparent;
+  color: var(--accent-2);
+  cursor:pointer;
+  padding:0;
+  font: inherit;
+}
+.link:hover{ text-decoration: underline; }
+
+.center{ text-align:center; }
+.muted{ color: var(--muted); font-size: 13px; }
+
+/* ========= 9) TOAST ========= */
+.toast{
+  margin: 0 18px 18px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--divider);
+  background: rgba(0,0,0,.18);
+  color: var(--muted);
+}
+:root[data-theme="light"] .toast{
+  background: rgba(255,255,255,.55);
+}
+.toast.is-ok{
+  border-color: rgba(45,212,191,.45);
+  color: rgba(45,212,191,.95);
+}
+.toast.is-bad{
+  border-color: rgba(255,77,109,.45);
+  color: rgba(255,77,109,.95);
+}
+
+/* ========= 10) MODAL ========= */
+.modal[hidden]{ display:none; }
+.modal{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding: 18px 14px;
+  z-index:999;
+}
+
+.modal__backdrop{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,.55);
+}
+
+.modal__panel{
+  position:relative;
+  width:min(520px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  overflow:hidden;
+}
+
+.modal__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.modal__header h2{
+  margin:0;
+  font-size:16px;
+}
+
+.icon{
+  width:38px;height:38px;
+  border-radius:12px;
+  border:1px solid var(--divider);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  cursor:pointer;
+}
+.icon:hover{ filter: brightness(1.06); }
+
+.modal .form{ padding: 14px 16px 16px; }
+
+/* ========= 11) RESPONSIVO ========= */
+@media (max-width: 1000px){
+  .auth__container{
+    grid-template-columns: 1fr;
+    gap: 50px;
+    text-align: center;
+  }
+  .auth__card-wrapper{ justify-content: center; }
+  .auth__logo{ width: 320px; }
+}
+
+@media (max-width: 520px){
+  .card__header, .screen{ padding-left:14px; padding-right:14px; }
+  .row{ flex-direction:column; align-items:flex-start; }
+}
+
+/* ========= 12) ANIMAÇÃO ========= */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
