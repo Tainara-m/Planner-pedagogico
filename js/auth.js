@@ -26,7 +26,7 @@
   switchBtns.forEach(btn => btn.addEventListener("click", () => setScreen(btn.dataset.screen)));
   $$("[data-goto]").forEach(btn => btn.addEventListener("click", () => setScreen(btn.dataset.goto)));
 
-  // Mostrar/ocultar senha
+  // Mostrar/ocultar senha (se existir botão no HTML)
   $$("[data-toggle-pass]").forEach(btn => {
     btn.addEventListener("click", () => {
       const input = $(btn.dataset.togglePass);
@@ -51,35 +51,60 @@
     toastTimer = setTimeout(() => {
       toast.hidden = true;
       toast.textContent = "";
-    }, 3500);
+    }, 4500);
+  }
+
+  // Se abriu via file://, o Supabase geralmente vai falhar por CORS
+  if (window.location.protocol === "file:") {
+    showToast("Abra pelo Live Server/localhost (não file://). Senão o Supabase bloqueia a conexão.", "bad");
   }
 
   // Se já estiver logada, manda direto pro app
   (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) window.location.href = "index.html";
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) window.location.href = "index.html";
+    } catch (e) {
+      console.warn("getSession falhou:", e);
+    }
   })();
+
+  // Helper: traduz erro de rede (fetch)
+  function asNiceError(err) {
+    const msg = (err?.message || String(err || "")).toLowerCase();
+
+    // Erro típico quando CORS / preflight falha / origin bloqueado
+    if (msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("load failed")) {
+      return "Falha de rede (CORS/Origin). Rode em http://localhost e adicione o origin no Supabase (Settings → API → Allowed Origins).";
+    }
+
+    return err?.message || "Erro inesperado.";
+  }
 
   // LOGIN (e-mail + senha)
   const loginForm = $("#loginForm");
   loginForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Você pode renomear no HTML para loginEmail depois.
     const email = ($("#loginUser")?.value.trim() || "").toLowerCase();
     const pass = $("#loginPass")?.value || "";
 
     if (!email || !email.includes("@")) return showToast("Informe um e-mail válido.", "bad");
     if (pass.length < 8) return showToast("A senha deve ter no mínimo 8 caracteres.", "bad");
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-    if (error) return showToast("E-mail ou senha inválidos.", "bad");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+      if (error) return showToast("E-mail ou senha inválidos.", "bad");
 
-    showToast("Login realizado! Entrando…", "ok");
-    setTimeout(() => window.location.href = "index.html", 250);
+      showToast("Login realizado! Entrando…", "ok");
+      setTimeout(() => window.location.href = "index.html", 250);
+    } catch (err) {
+      console.error("LOGIN EXCEPTION:", err);
+      showToast(asNiceError(err), "bad");
+    }
   });
 
-  // CADASTRO (Auth + garantir profile por fallback)
+  // CADASTRO (Auth + metadata pro trigger)
   const registerForm = $("#registerForm");
   registerForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -91,6 +116,7 @@
     const pass = $("#pass")?.value || "";
     const pass2 = $("#pass2")?.value || "";
 
+    if (!role) return showToast("Selecione seu status.", "bad");
     if (!name) return showToast("Informe seu nome.", "bad");
     if (!email || !email.includes("@")) return showToast("Informe um e-mail válido.", "bad");
     if (!username) return showToast("Crie um username.", "bad");
@@ -98,27 +124,31 @@
     if (pass.length < 8) return showToast("A senha deve ter no mínimo 8 caracteres.", "bad");
     if (pass !== pass2) return showToast("As senhas não conferem.", "bad");
 
-    const { data, error } = await supabase.auth.signUp({ email, password: pass });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: pass,
+        options: {
+          data: { name, username, role }
+        }
+      });
 
-if (error) {
-  console.error("SIGNUP ERROR:", error);
-  return showToast(error.message, "bad");
-}
+      if (error) {
+        console.error("SIGNUP ERROR:", error);
+        return showToast(error.message, "bad");
+      }
 
-    // Fallback: completa o profile caso trigger não preencha
-    const userId = data.user?.id;
-    if (userId) {
-      const payload = { id: userId, name, username };
-      // Se você tiver certeza que pode setar role pelo client, descomente:
-      // payload.role = role || "professor";
+      // Se exigir confirmação de e-mail, pode não ter session.
+      registerForm.reset();
+      showToast("Cadastro criado! Faça login (ou confirme o e-mail, se exigido).", "ok");
+      setScreen("login");
 
-      const { error: e2 } = await supabase.from("profiles").upsert(payload, { onConflict: "id" });
-      if (e2) console.warn("profiles upsert falhou (talvez trigger já cuide):", e2);
+      // Log mínimo para debug
+      console.log("signup ok:", { userId: data?.user?.id, email });
+    } catch (err) {
+      console.error("SIGNUP EXCEPTION:", err);
+      showToast(asNiceError(err), "bad");
     }
-
-    registerForm.reset();
-    showToast("Cadastro criado! Faça login (ou confirme o e-mail, se exigido).", "ok");
-    setScreen("login");
   });
 
   // RECUPERAR SENHA
@@ -149,14 +179,18 @@ if (error) {
     const email = ($("#recoverEmail")?.value.trim() || "").toLowerCase();
     if (!email || !email.includes("@")) return showToast("Informe um e-mail válido.", "bad");
 
-    // Ajuste se você criar uma página específica de reset depois
     const redirectTo = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, "/")}auth.html`;
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-    if (error) console.warn("resetPasswordForEmail:", error);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+      if (error) console.warn("resetPasswordForEmail:", error);
 
-    closeModal();
-    showToast("Se o e-mail existir, enviaremos o link de recuperação.", "ok");
+      closeModal();
+      showToast("Se o e-mail existir, enviaremos o link de recuperação.", "ok");
+    } catch (err) {
+      console.error("RESET EXCEPTION:", err);
+      showToast(asNiceError(err), "bad");
+    }
   });
 
   setScreen("login");

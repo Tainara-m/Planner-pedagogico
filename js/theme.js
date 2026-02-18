@@ -2,20 +2,27 @@
 (() => {
   const KEY = "planner_theme";
   const root = document.documentElement;
+  const btn = document.getElementById("themeToggle");
+
+  function apply(theme) {
+    root.dataset.theme = theme;
+    localStorage.setItem(KEY, theme);
+    if (btn) btn.textContent = theme === "light" ? "🌞" : "🌙";
+  }
 
   const saved = localStorage.getItem(KEY);
-  const prefersLight = window.matchMedia?.("(prefers-color-scheme: light)").matches;
+  if (saved === "light" || saved === "dark") {
+    apply(saved);
+  } else {
+    const prefersLight = window.matchMedia?.("(prefers-color-scheme: light)").matches;
+    apply(prefersLight ? "light" : "dark");
+  }
 
-  root.dataset.theme =
-    (saved === "light" || saved === "dark")
-      ? saved
-      : (prefersLight ? "light" : "dark");
-
-  // Se existir botão com id=themeToggle nesta página, ativa o click
-  const btn = document.getElementById("themeToggle");
-  btn?.addEventListener("click", () => {
+  // IMPORTANTE: garante que não tem onclick inline atrapalhando
+  btn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     const next = root.dataset.theme === "light" ? "dark" : "light";
-    root.dataset.theme = next;
-    localStorage.setItem(KEY, next);
+    apply(next);
   });
 })();

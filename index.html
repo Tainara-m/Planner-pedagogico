@@ -3,9 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Planner Pedagógico é uma ferramenta para professores organizarem suas turmas, avaliações e planejamento." />
+  <meta name="author" content="Tainara Martins" />
+  <meta name="keywords" content="planner, pedagógico, organização, turmas, planejamento, professores" />
   <title>Planner Pedagógico</title>
 
   <link rel="stylesheet" href="css/style.css" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="manifest" href="assets/site.webmanifest">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabaseClient.js"></script>
@@ -38,19 +49,216 @@
   </header>
 
   <main class="app" id="app">
+
+    <!-- CONFIGURAÇÃO = cadastros -->
     <section class="view is-active" data-view="config">
       <h1>Configuração</h1>
-      <p>Aqui você vai colocar preferências do app.</p>
+      <p>Cadastre disciplinas, turmas e organize os horários semanais.</p>
+
+      <div class="classes-layout">
+
+        <div class="panel">
+          <h2>Disciplinas</h2>
+          <form id="subjectCreateForm" class="form form-inline">
+            <div class="field">
+              <label for="subjectName">Nova disciplina</label>
+              <input id="subjectName" placeholder="Ex.: Matemática" required />
+            </div>
+            <button class="btn-ghost" type="submit">Adicionar</button>
+          </form>
+          <div id="subjectsList" class="list"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Criar turma</h2>
+          <form id="classCreateForm" class="form">
+            <div class="field">
+              <label for="className">Nome da turma</label>
+              <input id="className" placeholder="Ex.: 3ºA" required />
+            </div>
+
+            <div class="field">
+              <label for="classYear">Ano</label>
+              <input id="classYear" type="number" min="2000" max="2100" required />
+            </div>
+
+            <div class="field">
+              <label for="classShift">Turno (opcional)</label>
+              <input id="classShift" placeholder="Ex.: Manhã" />
+            </div>
+
+            <button class="btn-ghost" type="submit">Criar</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Minhas turmas</h2>
+          <div id="classesList" class="list"></div>
+
+          <div class="meta" style="margin-top:10px;color:var(--muted);font-size:13px">
+            Dica: a aba <strong>Turmas</strong> é só para consultar os horários do dia/semana.
+          </div>
+        </div>
+
+        <div class="panel panel--detail" id="classDetail" hidden>
+          <div class="row">
+            <h2 id="classTitle">Turma</h2>
+            <button class="btn-ghost" type="button" id="deleteClassBtn">Excluir turma</button>
+          </div>
+
+          <h3>Disciplinas desta turma</h3>
+
+          <form id="linkSubjectForm" class="form form-inline">
+            <div class="field">
+              <label for="subjectSelect">Adicionar disciplina</label>
+              <select id="subjectSelect"></select>
+            </div>
+
+            <div class="field">
+              <label for="weeklyClasses">Aulas/semana (opcional)</label>
+              <input id="weeklyClasses" type="number" min="0" max="20" />
+            </div>
+
+            <button class="btn-ghost" type="submit">Adicionar</button>
+          </form>
+
+          <div id="classSubjectsList" class="list"></div>
+
+          <h3 style="margin-top:14px;">Horários da turma</h3>
+          <form id="scheduleCreateForm" class="form form-inline">
+            <div class="field">
+              <label for="scheduleDay">Dia</label>
+              <select id="scheduleDay">
+                <option value="1">Segunda</option>
+                <option value="2">Terça</option>
+                <option value="3">Quarta</option>
+                <option value="4">Quinta</option>
+                <option value="5">Sexta</option>
+                <option value="6">Sábado</option>
+                <option value="0">Domingo</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="scheduleSubject">Disciplina</label>
+              <select id="scheduleSubject"></select>
+            </div>
+
+            <div class="field">
+              <label for="scheduleStart">Início</label>
+              <input id="scheduleStart" type="time" required />
+            </div>
+
+            <div class="field">
+              <label for="scheduleEnd">Fim</label>
+              <input id="scheduleEnd" type="time" required />
+            </div>
+
+            <button class="btn-ghost" type="submit">Adicionar</button>
+          </form>
+
+          <div id="scheduleList" class="list"></div>
+
+          <!-- ✅ NOVO: Alunos da turma -->
+          <h3 style="margin-top:14px;">Alunos da turma</h3>
+
+          <form id="studentCreateForm" class="form form-inline">
+            <div class="field">
+              <label for="studentName">Adicionar aluno</label>
+              <input id="studentName" placeholder="Ex.: Ana Souza" required />
+            </div>
+            <button class="btn-ghost" type="submit">Adicionar</button>
+          </form>
+
+          <div id="classStudentsList" class="list"></div>
+        </div>
+
+      </div>
     </section>
 
+    <!-- TURMAS = consulta (UPGRADE) -->
     <section class="view" data-view="classes" hidden>
-      <h1>Turmas</h1>
-      <p>Cadastro e lista de turmas.</p>
+      <div class="row">
+        <div>
+          <h1>Turmas</h1>
+          <p style="margin-top:6px;">Consulta rápida das suas aulas por dia e horário.</p>
+        </div>
+
+        <div class="panel-actions">
+          <div class="field" style="min-width:220px;">
+            <label for="shiftFilter">Filtro de turno</label>
+            <select id="shiftFilter">
+              <option value="all">Todos</option>
+              <option value="manhã">Manhã</option>
+              <option value="tarde">Tarde</option>
+              <option value="noite">Noite</option>
+              <option value="none">Sem turno</option>
+            </select>
+          </div>
+          <button class="btn-ghost" type="button" id="printWeekBtn">Imprimir semana</button>
+          <button class="btn-ghost" type="button" id="refreshScheduleBtn">Atualizar</button>
+        </div>
+      </div>
+
+      <div class="classes-layout">
+        <div class="panel">
+          <h2>Próxima aula</h2>
+          <div id="nextClassCard" class="list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="row">
+            <h2 id="todayTitle">Hoje</h2>
+          </div>
+          <div id="todayScheduleList" class="list"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Semana</h2>
+          <div id="weekSchedule" class="list"></div>
+        </div>
+      </div>
     </section>
 
+    <!-- ✅ NOVO: Chamada (UI) -->
     <section class="view" data-view="attendance" hidden>
-      <h1>Chamada</h1>
-      <p>Registro de presença.</p>
+      <div class="row">
+        <div>
+          <h1>Chamada</h1>
+          <p style="margin-top:6px;">Faça a chamada diária e acompanhe o total de faltas por aluno.</p>
+        </div>
+      </div>
+
+      <div class="classes-layout">
+        <div class="panel">
+          <h2>Selecionar turma e data</h2>
+
+          <form id="attendanceTopForm" class="form form-inline">
+            <div class="field" style="min-width:220px;">
+              <label for="attendanceClassSelect">Turma</label>
+              <select id="attendanceClassSelect"></select>
+            </div>
+
+            <div class="field">
+              <label for="attendanceDate">Data</label>
+              <input id="attendanceDate" type="date" required />
+            </div>
+
+            <button class="btn-ghost" type="button" id="loadAttendanceBtn">Carregar</button>
+          </form>
+
+          <div class="meta" id="attendanceStatus" style="margin-top:10px;color:var(--muted);font-size:13px"></div>
+        </div>
+
+        <div class="panel panel--detail">
+          <div class="row">
+            <h2>Lista de alunos</h2>
+            <button class="btn-ghost" type="button" id="saveAttendanceBtn">Salvar chamada</button>
+          </div>
+
+          <div id="attendanceList" class="list"></div>
+        </div>
+      </div>
     </section>
 
     <section class="view" data-view="dailyPlan" hidden>
@@ -62,6 +270,7 @@
       <h1>Avaliações</h1>
       <p>Criação de avaliações e lançamento de notas.</p>
     </section>
+
   </main>
 </body>
 </html>
