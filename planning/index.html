@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de Plano de Aula</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+  <link rel="manifest" href="../assets/site.webmanifest">
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Supabase (para salvar/carregar) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabaseClient.js"></script>
+
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="bg-orb bg-orb--a" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--b" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="toolbar card" style="margin-bottom:14px;">
+      <h1 style="margin:0;">Gerador de Plano de Aula</h1>
+      <span class="chip" id="autosaveStatus">Novo plano</span>
+    </header>
+
+    <section class="card" style="margin-bottom:14px;">
+      <h2>Configurações do Plano</h2>
+
+      <div class="grid cols-3" style="margin-top:10px;">
+        <div>
+          <label>Turma</label>
+          <input id="turma" placeholder="Ex.: 3º ano" />
+        </div>
+        <div>
+          <label>Bimestre/Trimestre</label>
+          <input id="trimestre" placeholder="Ex.: 1º bimestre" />
+        </div>
+        <div>
+          <label>Matéria</label>
+          <input id="materia" placeholder="Ex.: Matemática" />
+        </div>
+
+        <div>
+          <label>Professor(a)</label>
+          <input id="professor" placeholder="Seu nome" />
+        </div>
+        <div>
+          <label>Ano letivo</label>
+          <input id="anoLetivo" placeholder="2026" />
+        </div>
+        <div class="grid cols-2" style="gap:12px;">
+          <div>
+            <label>Nº de semanas</label>
+            <input id="numSemanas" type="number" min="1" value="1" />
+          </div>
+          <div>
+            <label>Aulas/semana</label>
+            <input id="aulasPorSemana" type="number" min="1" value="2" />
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar" style="justify-content:flex-start; margin-top:12px;">
+        <button class="btn primary" id="btnGerar" type="button">Gerar semanas</button>
+        <span class="chip">Semanas: <strong id="resSemanas">1</strong></span>
+        <span class="chip">Aulas/semana: <strong id="resAulasSemana">2</strong></span>
+        <span class="chip">Total de aulas: <strong id="resTotalAulas">2</strong></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="toolbar" style="justify-content:flex-start; margin-bottom:10px;">
+        <button class="btn warn" id="btnExpandir" type="button">Expandir tudo</button>
+        <button class="btn ghost" id="btnRecolher" type="button">Recolher tudo</button>
+        <button class="btn ok" id="btnSalvar" type="button">💾 Salvar</button>
+        <button class="btn" id="btnLimpar" type="button">Limpar conteúdo</button>
+        <button class="btn primary" id="btnPDF" type="button">Gerar PDF</button>
+      </div>
+
+      <div id="weeksContainer" class="grid" style="gap:16px"></div>
+    </section>
+
+    <footer class="muted" style="margin:16px 0 24px;text-align:center">
+      <small>Plano de Aula • 2025</small>
+    </footer>
+  </div>
+
+  <template id="lessonTemplate">
+    <div class="lesson page">
+      <h3></h3>
+
+      <div class="grid cols-2" style="margin-bottom:10px">
+        <div>
+          <label>Data da aula</label>
+          <input type="date" class="dataAula" />
+        </div>
+        <div>
+          <label>Forma de ensinar</label>
+          <select class="metodo">
+            <option value="">Selecione…</option>
+            <option>Aula expositiva</option>
+            <option>Atividade prática</option>
+            <option>Estudo dirigido</option>
+            <option>Discussão em grupo</option>
+            <option>Laboratório</option>
+            <option>Resolução de problemas</option>
+            <option>Projeto</option>
+            <option>Apresentação de Slides</option>
+            <option>Avaliação formativa</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-bottom:10px">
+        <div>
+          <label>Conteúdo da aula</label>
+          <textarea class="conteudoAula" placeholder="Ex.: Equações do 2º grau — parte 1" rows="2"></textarea>
+        </div>
+        <div>
+          <label>Recursos</label>
+          <textarea class="recursos" placeholder="Ex.: quadro, projetor, simulador PhET, folhas…" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label>Objetivos</label>
+        <textarea class="objetivos" placeholder="Ex.: Resolver problemas, interpretar raízes, compreender conceitos fundamentais…" rows="3"></textarea>
+      </div>
+    </div>
+  </template>
+
+  <template id="weekTemplate">
+    <div class="week page">
+      <div class="head">
+        <strong>Semana <span class="wIndex"></span></strong>
+        <div class="week-actions">
+          <button class="btn btnDuplicar" type="button" title="Duplicar semana">Duplicar</button>
+          <button class="btn btnRemover" type="button" title="Remover semana">Remover</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label>Conteúdo da semana</label>
+        <textarea class="conteudoSemana" placeholder="Assuntos/competências da semana" rows="2"></textarea>
+      </div>
+
+      <div class="lessons grid" style="gap:12px"></div>
+    </div>
+  </template>
+</body>
+</html>

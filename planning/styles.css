@@ -1,0 +1,260 @@
+/* planning/styles.css */
+/* Harmônico com o Planner Pedagógico (glass + dark/light + bordas suaves) */
+
+:root{
+  color-scheme: dark;
+
+  --bg:#0b0c10;
+  --text:#f3e7cf;
+  --muted:rgba(243,231,207,.72);
+  --line:rgba(255,255,255,.10);
+  --card:rgba(255,255,255,.03);
+  --card2:rgba(0,0,0,.14);
+
+  --radius:18px;
+  --radius2:14px;
+
+  --shadow: 0 12px 38px rgba(0,0,0,.35);
+
+  --orb-a: rgba(255, 206, 107, .18);
+  --orb-b: rgba(130, 210, 255, .14);
+
+  --focus: rgba(255, 206, 107, .38);
+
+  --btn-bg: rgba(255,255,255,.05);
+  --btn-bg-hover: rgba(255,255,255,.08);
+  --btn-border: rgba(255,255,255,.12);
+
+  --primary-bg: rgba(255, 206, 107, .18);
+  --primary-border: rgba(255, 206, 107, .35);
+
+  --ok-bg: rgba(90, 220, 160, .14);
+  --ok-border: rgba(90, 220, 160, .32);
+
+  --warn-bg: rgba(255, 140, 140, .14);
+  --warn-border: rgba(255, 140, 140, .34);
+}
+
+@media (prefers-color-scheme: light){
+  :root{
+    color-scheme: light;
+
+    --bg:#f3e7cf;
+    --text:#1a1412;
+    --muted:rgba(26,20,18,.70);
+    --line:rgba(0,0,0,.12);
+    --card:rgba(255,255,255,.62);
+    --card2:rgba(0,0,0,.04);
+
+    --shadow: 0 10px 30px rgba(0,0,0,.12);
+
+    --orb-a: rgba(118, 80, 255, .14);
+    --orb-b: rgba(0, 150, 136, .12);
+
+    --focus: rgba(118, 80, 255, .24);
+
+    --btn-bg: rgba(0,0,0,.04);
+    --btn-bg-hover: rgba(0,0,0,.06);
+    --btn-border: rgba(0,0,0,.12);
+
+    --primary-bg: rgba(118, 80, 255, .12);
+    --primary-border: rgba(118, 80, 255, .22);
+
+    --ok-bg: rgba(0, 150, 136, .10);
+    --ok-border: rgba(0, 150, 136, .20);
+
+    --warn-bg: rgba(255, 120, 120, .10);
+    --warn-border: rgba(255, 120, 120, .22);
+  }
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x:hidden;
+}
+
+/* fundo “mágico” sutil (sem brigar com o app principal) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-3;
+  background:
+    radial-gradient(900px 520px at 10% 10%, rgba(255,255,255,.07), transparent 60%),
+    radial-gradient(760px 520px at 90% 20%, rgba(255,255,255,.05), transparent 60%),
+    radial-gradient(900px 620px at 50% 100%, rgba(255,255,255,.04), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.04));
+}
+
+.bg-orb{
+  position:fixed;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  filter: blur(55px);
+  opacity:.85;
+  pointer-events:none;
+  z-index:-2;
+}
+.bg-orb--a{ top:-240px; left:-240px; background: var(--orb-a); }
+.bg-orb--b{ bottom:-280px; right:-280px; background: var(--orb-b); }
+
+/* layout */
+.app{
+  width:min(1100px, calc(100% - 28px));
+  margin: 18px auto 24px;
+}
+
+/* cards / seções */
+.card{
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.page{
+  border:1px solid var(--line);
+  border-radius: var(--radius2);
+  background: var(--card2);
+  padding: 12px;
+}
+
+/* tipografia */
+h1, h2, h3{
+  font-family: Cinzel, Inter, system-ui, sans-serif;
+  letter-spacing:.2px;
+  margin: 0 0 10px;
+}
+h1{ font-size: 22px; }
+h2{ font-size: 18px; }
+h3{ font-size: 16px; }
+
+.muted{ color: var(--muted); }
+
+/* grids */
+.grid{ display:grid; gap: 12px; }
+.grid.cols-2{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 900px){
+  .grid.cols-3{ grid-template-columns: 1fr; }
+}
+@media (max-width: 720px){
+  .grid.cols-2{ grid-template-columns: 1fr; }
+}
+
+/* form */
+label{
+  display:block;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--text);
+}
+input, select, textarea{
+  width:100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border:1px solid var(--line);
+  background: rgba(0,0,0,.16);
+  color: var(--text);
+  outline:none;
+}
+@media (prefers-color-scheme: light){
+  input, select, textarea{ background: rgba(255,255,255,.6); }
+}
+textarea{ resize: vertical; min-height: 44px; }
+
+input:focus, select:focus, textarea:focus{
+  box-shadow: 0 0 0 4px var(--focus);
+  border-color: rgba(255,255,255,.22);
+}
+
+/* toolbar / ações */
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* chips */
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* botões */
+.btn{
+  appearance:none;
+  border:1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor:pointer;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover{ background: var(--btn-bg-hover); }
+.btn:active{ transform: translateY(1px); }
+
+.btn.primary{
+  background: var(--primary-bg);
+  border-color: var(--primary-border);
+}
+.btn.ok{
+  background: var(--ok-bg);
+  border-color: var(--ok-border);
+}
+.btn.warn{
+  background: var(--warn-bg);
+  border-color: var(--warn-border);
+}
+.btn.ghost{
+  background: transparent;
+}
+
+.btn:focus{
+  outline:none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+/* Semana */
+.week .head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.week-actions{ display:flex; gap:10px; flex-wrap: wrap; }
+
+/* Aula */
+.lesson h3{
+  margin:0 0 10px;
+  font-weight: 700;
+}
+
+/* responsivo e confortável */
+@media (max-width: 600px){
+  .app{ width: calc(100% - 22px); margin: 12px auto 18px; }
+  .card{ padding: 12px; }
+  .page{ padding: 10px; }
+  h1{ font-size: 20px; }
+}

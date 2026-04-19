@@ -3,23 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Planner Pedagógico é uma ferramenta para professores organizarem suas turmas, avaliações e planejamento." />
-  <meta name="author" content="Tainara Martins" />
-  <meta name="keywords" content="planner, pedagógico, organização, turmas, planejamento, professores" />
   <title>Planner Pedagógico</title>
 
   <link rel="stylesheet" href="css/style.css" />
-
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
   <link rel="manifest" href="assets/site.webmanifest">
-
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabaseClient.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/app.js" defer></script>
 </head>
@@ -28,19 +23,16 @@
   <header class="topbar">
     <div class="topbar-row">
       <div class="brand">
-        <img src="assets/icon.png" alt="Logo do Planner" class="logo" />
+        <img src="assets/icon.png" alt="Logo" class="logo" />
         <span class="title">Planner Pedagógico</span>
       </div>
-
       <div class="topbar-actions">
-        <span id="userBadge" class="user-badge"></span>
+        <span class="user-badge" title="Dados salvos localmente">💾 Local</span>
         <button class="theme-btn" type="button" id="themeToggle" aria-label="Alternar tema">🌓</button>
-        <button class="btn-ghost" type="button" id="logoutBtn">Sair</button>
       </div>
     </div>
-
-    <nav class="tabs" role="tablist" aria-label="Navegação principal">
-      <button class="tab is-active" role="tab" aria-selected="true" data-view="config">Configuração</button>
+    <nav class="tabs" role="tablist">
+      <button class="tab is-active" role="tab" aria-selected="true"  data-view="config">Configuração</button>
       <button class="tab" role="tab" aria-selected="false" data-view="classes">Turmas</button>
       <button class="tab" role="tab" aria-selected="false" data-view="attendance">Chamada</button>
       <button class="tab" role="tab" aria-selected="false" data-view="dailyPlan">Planejamento</button>
@@ -50,11 +42,10 @@
 
   <main class="app" id="app">
 
-    <!-- CONFIGURAÇÃO = cadastros -->
+    <!-- ── CONFIGURAÇÃO ─────────────────────────── -->
     <section class="view is-active" data-view="config">
       <h1>Configuração</h1>
       <p>Cadastre disciplinas, turmas e organize os horários semanais.</p>
-
       <div class="classes-layout">
 
         <div class="panel">
@@ -76,17 +67,14 @@
               <label for="className">Nome da turma</label>
               <input id="className" placeholder="Ex.: 3ºA" required />
             </div>
-
             <div class="field">
               <label for="classYear">Ano</label>
               <input id="classYear" type="number" min="2000" max="2100" required />
             </div>
-
             <div class="field">
               <label for="classShift">Turno (opcional)</label>
               <input id="classShift" placeholder="Ex.: Manhã" />
             </div>
-
             <button class="btn-ghost" type="submit">Criar</button>
           </form>
         </div>
@@ -94,7 +82,6 @@
         <div class="panel">
           <h2>Minhas turmas</h2>
           <div id="classesList" class="list"></div>
-
           <div class="meta" style="margin-top:10px;color:var(--muted);font-size:13px">
             Dica: a aba <strong>Turmas</strong> é só para consultar os horários do dia/semana.
           </div>
@@ -107,21 +94,17 @@
           </div>
 
           <h3>Disciplinas desta turma</h3>
-
           <form id="linkSubjectForm" class="form form-inline">
             <div class="field">
               <label for="subjectSelect">Adicionar disciplina</label>
               <select id="subjectSelect"></select>
             </div>
-
             <div class="field">
               <label for="weeklyClasses">Aulas/semana (opcional)</label>
               <input id="weeklyClasses" type="number" min="0" max="20" />
             </div>
-
             <button class="btn-ghost" type="submit">Adicionar</button>
           </form>
-
           <div id="classSubjectsList" class="list"></div>
 
           <h3 style="margin-top:14px;">Horários da turma</h3>
@@ -138,30 +121,23 @@
                 <option value="0">Domingo</option>
               </select>
             </div>
-
             <div class="field">
               <label for="scheduleSubject">Disciplina</label>
               <select id="scheduleSubject"></select>
             </div>
-
             <div class="field">
               <label for="scheduleStart">Início</label>
               <input id="scheduleStart" type="time" required />
             </div>
-
             <div class="field">
               <label for="scheduleEnd">Fim</label>
               <input id="scheduleEnd" type="time" required />
             </div>
-
             <button class="btn-ghost" type="submit">Adicionar</button>
           </form>
-
           <div id="scheduleList" class="list"></div>
 
-          <!-- ✅ NOVO: Alunos da turma -->
           <h3 style="margin-top:14px;">Alunos da turma</h3>
-
           <form id="studentCreateForm" class="form form-inline">
             <div class="field">
               <label for="studentName">Adicionar aluno</label>
@@ -169,21 +145,19 @@
             </div>
             <button class="btn-ghost" type="submit">Adicionar</button>
           </form>
-
           <div id="classStudentsList" class="list"></div>
         </div>
 
       </div>
     </section>
 
-    <!-- TURMAS = consulta (UPGRADE) -->
+    <!-- ── TURMAS ────────────────────────────────── -->
     <section class="view" data-view="classes" hidden>
       <div class="row">
         <div>
           <h1>Turmas</h1>
           <p style="margin-top:6px;">Consulta rápida das suas aulas por dia e horário.</p>
         </div>
-
         <div class="panel-actions">
           <div class="field" style="min-width:220px;">
             <label for="shiftFilter">Filtro de turno</label>
@@ -199,20 +173,15 @@
           <button class="btn-ghost" type="button" id="refreshScheduleBtn">Atualizar</button>
         </div>
       </div>
-
       <div class="classes-layout">
         <div class="panel">
           <h2>Próxima aula</h2>
           <div id="nextClassCard" class="list"></div>
         </div>
-
         <div class="panel">
-          <div class="row">
-            <h2 id="todayTitle">Hoje</h2>
-          </div>
+          <div class="row"><h2 id="todayTitle">Hoje</h2></div>
           <div id="todayScheduleList" class="list"></div>
         </div>
-
         <div class="panel">
           <h2>Semana</h2>
           <div id="weekSchedule" class="list"></div>
@@ -220,7 +189,7 @@
       </div>
     </section>
 
-    <!-- ✅ NOVO: Chamada (UI) -->
+    <!-- ── CHAMADA ───────────────────────────────── -->
     <section class="view" data-view="attendance" hidden>
       <div class="row">
         <div>
@@ -228,49 +197,213 @@
           <p style="margin-top:6px;">Faça a chamada diária e acompanhe o total de faltas por aluno.</p>
         </div>
       </div>
-
       <div class="classes-layout">
         <div class="panel">
           <h2>Selecionar turma e data</h2>
-
           <form id="attendanceTopForm" class="form form-inline">
             <div class="field" style="min-width:220px;">
               <label for="attendanceClassSelect">Turma</label>
               <select id="attendanceClassSelect"></select>
             </div>
-
             <div class="field">
               <label for="attendanceDate">Data</label>
               <input id="attendanceDate" type="date" required />
             </div>
-
             <button class="btn-ghost" type="button" id="loadAttendanceBtn">Carregar</button>
           </form>
-
           <div class="meta" id="attendanceStatus" style="margin-top:10px;color:var(--muted);font-size:13px"></div>
         </div>
-
         <div class="panel panel--detail">
           <div class="row">
             <h2>Lista de alunos</h2>
             <button class="btn-ghost" type="button" id="saveAttendanceBtn">Salvar chamada</button>
           </div>
-
           <div id="attendanceList" class="list"></div>
         </div>
       </div>
     </section>
 
+    <!-- ── PLANEJAMENTO ──────────────────────────── -->
     <section class="view" data-view="dailyPlan" hidden>
-      <h1>Planejamento</h1>
-      <p>Planejamento diário/por disciplina.</p>
+      <div class="row">
+        <div>
+          <h1>Planejamento</h1>
+          <p style="margin-top:6px;">Registre o planejamento de cada aula com habilidades da BNCC.</p>
+        </div>
+        <button class="btn-ghost btn-primary" type="button" id="openPlanModalBtn">＋ Novo planejamento</button>
+      </div>
+      <div class="classes-layout">
+        <div class="panel">
+          <div id="plansList" class="list"></div>
+        </div>
+      </div>
     </section>
 
+    <!-- ── AVALIAÇÕES ────────────────────────────── -->
     <section class="view" data-view="assessments" hidden>
-      <h1>Avaliações</h1>
-      <p>Criação de avaliações e lançamento de notas.</p>
+      <div class="row">
+        <div>
+          <h1>Avaliações</h1>
+          <p style="margin-top:6px;">Crie avaliações e lance as notas de cada aluno.</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+          <button class="btn-ghost" type="button" id="openReportModalBtn">📊 Relatório por aluno</button>
+          <button class="btn-ghost btn-primary" type="button" id="openAssessModalBtn">＋ Nova avaliação</button>
+        </div>
+      </div>
+      <div class="classes-layout">
+        <div class="panel">
+          <div id="assessmentsList" class="list"></div>
+        </div>
+      </div>
     </section>
 
   </main>
+
+  <!-- ════════════════════════════════════════════════
+       MODAL — Ver Planejamento
+  ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="viewPlanModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="viewPlanTitle">
+    <div class="modal-box modal-box--wide">
+      <div class="modal-header">
+        <h2 id="viewPlanTitle">Planejamento</h2>
+        <button class="modal-close" type="button" id="closeViewPlanModal" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body view-plan-body">
+        <div class="view-plan-meta">
+          <div class="view-plan-badge" id="viewPlanClass">—</div>
+          <div class="view-plan-badge" id="viewPlanSubject">—</div>
+          <div class="view-plan-badge" id="viewPlanDate">—</div>
+          <div class="view-plan-badge pill-bncc" id="viewPlanBncc" style="display:none"></div>
+        </div>
+        <div class="view-plan-section">
+          <div class="view-plan-label">Conteúdo da aula</div>
+          <div class="view-plan-content" id="viewPlanContent"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="closeViewPlanModal2">Fechar</button>
+        <button type="button" class="btn-ghost btn-primary" id="exportPlanPdfBtn">⬇ Exportar PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       MODAL — Novo Planejamento
+  ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="planModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="planModalTitle">Novo Planejamento</h2>
+        <button class="modal-close" type="button" id="closePlanModal" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-fields">
+          <div class="field">
+            <label for="planClass">Turma</label>
+            <select id="planClass"></select>
+          </div>
+          <div class="field">
+            <label for="planSubject">Disciplina</label>
+            <select id="planSubject"></select>
+          </div>
+          <div class="field">
+            <label for="planDate">Data da aula</label>
+            <input id="planDate" type="date" />
+          </div>
+          <div class="field field--full">
+            <label for="planBncc">Habilidade da BNCC <span class="optional">(opcional)</span></label>
+            <input id="planBncc" type="text" placeholder="Ex.: EF06MA01" maxlength="20" />
+          </div>
+          <div class="field field--full">
+            <label for="planContent">Conteúdo da aula</label>
+            <textarea id="planContent" rows="4" placeholder="Descreva o conteúdo e objetivos da aula…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" id="closePlanModal2">Cancelar</button>
+          <button type="button" class="btn-ghost btn-primary" id="savePlanBtn">Salvar planejamento</button>
+        </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       MODAL — Nova Avaliação
+  ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="assessModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="assessModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="assessModalTitle">Nova Avaliação</h2>
+        <button class="modal-close" type="button" id="closeAssessModal" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-fields">
+          <div class="field">
+            <label for="assessClass">Turma</label>
+            <select id="assessClass"></select>
+          </div>
+          <div class="field">
+            <label for="assessSubject">Disciplina</label>
+            <select id="assessSubject"></select>
+          </div>
+          <div class="field field--full">
+            <label for="assessName">Nome da avaliação</label>
+            <input id="assessName" type="text" placeholder="Ex.: Prova 1 — Bimestre 1" />
+          </div>
+          <div class="field">
+            <label for="assessMax">Valor máximo</label>
+            <input id="assessMax" type="number" min="0.1" step="0.1" placeholder="Ex.: 10" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" id="closeAssessModal2">Cancelar</button>
+          <button type="button" class="btn-ghost btn-primary" id="saveAssessBtn">Criar avaliação</button>
+        </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       MODAL — Lançar Notas
+  ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="gradeModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="gradeModalTitle">
+    <div class="modal-box modal-box--wide">
+      <div class="modal-header">
+        <h2 id="gradeModalTitle">Notas</h2>
+        <button class="modal-close" type="button" id="closeGradeModal" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="gradeList" class="list grade-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="closeGradeModal2" onclick="document.getElementById('closeGradeModal').click()">Cancelar</button>
+        <button type="button" class="btn-ghost btn-primary" id="saveGradesBtn">💾 Salvar notas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       MODAL — Relatório por Aluno
+  ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="reportModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+    <div class="modal-box modal-box--wide">
+      <div class="modal-header">
+        <h2 id="reportModalTitle">Relatório por Aluno</h2>
+        <button class="modal-close" type="button" id="closeReportModal" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body" style="padding:14px 20px;">
+        <div class="report-filters">
+          <div class="field" style="flex:1;min-width:180px;">
+            <label for="reportClassSelect">Turma</label>
+            <select id="reportClassSelect"></select>
+          </div>
+          <button class="btn-ghost btn-primary" type="button" id="loadReportBtn" style="align-self:flex-end;white-space:nowrap;">Gerar</button>
+        </div>
+        <div id="reportContent" style="margin-top:14px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="closeReportModal2">Fechar</button>
+        <button type="button" class="btn-ghost btn-primary" id="exportReportPdfBtn">⬇ Exportar PDF</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
